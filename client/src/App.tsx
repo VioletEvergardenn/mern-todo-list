@@ -1,36 +1,19 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-
-interface ItemsTypes {
-  _id: string;
-  title: string;
-  description: string;
-  created_at: Date;
-}
+import React from "react";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+import { Navigate, Route, Routes } from "react-router-dom";
+import Homepage from "./pages/Homepage";
+import NewNote from "./pages/NewNote";
 
 const App: React.FC = () => {
-  const [items, setItems] = useState<ItemsTypes[]>();
-  useEffect(() => {
-    async function getItems() {
-      const { data } = await axios.get("http://localhost:3000/");
-      console.log(data);
-      setItems(data);
-      return data;
-    }
-    getItems();
-  }, []);
+  const queryClient = new QueryClient();
   return (
-    <ul>
-      {items?.map((item) => {
-        return (
-          <li>
-            {item.title}
-            <br></br>
-            {item.description}
-          </li>
-        );
-      })}
-    </ul>
+    <QueryClientProvider client={queryClient}>
+      <Routes>
+        <Route index element={<Navigate to={"/home"} replace={true} />} />
+        <Route path="/home" element={<Homepage />} />
+        <Route path="/new" element={<NewNote />} />
+      </Routes>
+    </QueryClientProvider>
   );
 };
 
